@@ -1,0 +1,31 @@
+# Ignore common development and system files
+.git
+.env
+__pycache__
+*.pyc
+
+# Ignore virtual environment directories
+env/
+venv/
+.venv/
+
+# Ignore any logs or generated files
+logs/
+*.log
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore testing and coverage files
+htmlcov/
+.coverage
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore any other specific files or directories
+<specific_file_or_directory>
