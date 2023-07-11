@@ -2,8 +2,10 @@ import logging
 from flask import Flask, request, jsonify
 from flask_restx import Api, Resource
 from app.models import db, user_model,login_model, User
+# https://flask-migrate.readthedocs.io/en/latest/
 from flask_migrate import Migrate
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 # create the app
@@ -14,13 +16,15 @@ app.config.from_pyfile('config.py')
 
 # initialize the app with the extension
 db.init_app(app)
-
 migrate = Migrate(app, db)
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+# initialize the api
 api = Api(app)
-
 auth_ns = api.namespace('auth', description='Authentication operations')
-
 api_user_model = api.model('User', user_model)
 api_login_model = api.model('Login', login_model)
 
@@ -39,9 +43,16 @@ class UserRegistration(Resource):
         # Perform validation on email and password
         if not email or not password or not full_name:
             return {'error': 'Email and password are required.'}, 400
+        
+        # Check if the email is already registered
+        if User.query.filter_by(email=email).first():
+            return {'error': 'Email already exists.'}, 409
+        
+        # Generate a hashed password
+        hashed_password = generate_password_hash(password)
 
         # Create a new User object
-        new_user = User(email=email, password=password, full_name=full_name)
+        new_user = User(email=email, password=hashed_password, full_name=full_name)
 
         try:
             # Add the user to the session
@@ -72,15 +83,17 @@ class UserLogin(Resource):
         email = user_data.get('email')
         password = user_data.get('password')
 
-        # TODO: Implement code to validate user credentials
+        # Retrieve the user from the database based on the provided email
+        user = User.query.filter_by(email=email).first()
+        
 
-        # Placeholder code for demonstration
-        if email == 'user@example.com' and password == 'password123':
+        if user and check_password_hash(user.password, password):
+            # User credentials are valid
             return {'message': 'Login successful.'}, 200
         else:
+            # Invalid credentials
             return {'error': 'Invalid credentials.'}, 401
 
-    
 
 
 if __name__ == '__main__':
