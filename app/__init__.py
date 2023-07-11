@@ -1,4 +1,6 @@
 import logging
+import jwt
+from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
 from flask_restx import Api, Resource
 from app.models import db, user_model,login_model, User
@@ -89,7 +91,17 @@ class UserLogin(Resource):
 
         if user and check_password_hash(user.password, password):
             # User credentials are valid
-            return {'message': 'Login successful.'}, 200
+            # Generate an authentication token
+            token = jwt.encode(
+                {
+                    'user_id': user.id,
+                    'exp': datetime.utcnow() + timedelta(hours=1)  # Token expiration time
+                },
+                'your-secret-key',  # Replace with your own secret key
+                algorithm='HS256'
+            )
+
+            return {'token': token}, 200
         else:
             # Invalid credentials
             return {'error': 'Invalid credentials.'}, 401
