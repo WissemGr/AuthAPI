@@ -12,7 +12,7 @@ This is a Flask-based API for user registration and authentication.
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/your-username/flask-user-authentication-api.git
+   git clone https://github.com/WissemGr/AuthAPI.git
    ```
 
 2. Install the dependencies:
@@ -34,7 +34,7 @@ This is a Flask-based API for user registration and authentication.
 1. Start the server:
 
    ```shell
-   python app.py
+   flask run
    ```
 
 2. Register a new user:
