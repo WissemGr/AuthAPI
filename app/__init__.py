@@ -1,7 +1,7 @@
 import logging
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_restx import Api, Resource
-from app.models import db, user_model, User
+from app.models import db, user_model,login_model, User
 from flask_migrate import Migrate
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -22,7 +22,7 @@ api = Api(app)
 auth_ns = api.namespace('auth', description='Authentication operations')
 
 api_user_model = api.model('User', user_model)
-
+api_login_model = api.model('Login', login_model)
 
 @auth_ns.route('/register')
 class UserRegistration(Resource):
@@ -59,7 +59,28 @@ class UserRegistration(Resource):
             # Log the error
             logging.exception(f"{e}")
             return {'error': 'Failed to register user.'}, 500
+        
+@auth_ns.route('/login')
+class UserLogin(Resource):
+    @auth_ns.expect(api_login_model, validate=True)
+    def post(self):
 
+        # Retrieve user data from the request
+        user_data = api.payload
+        
+        # Extract email and password from user data
+        email = user_data.get('email')
+        password = user_data.get('password')
+
+        # TODO: Implement code to validate user credentials
+
+        # Placeholder code for demonstration
+        if email == 'user@example.com' and password == 'password123':
+            return {'message': 'Login successful.'}, 200
+        else:
+            return {'error': 'Invalid credentials.'}, 401
+
+    
 
 
 if __name__ == '__main__':

@@ -9,6 +9,11 @@ user_model = {
     'full_name': fields.String(required=True, description='User full name')
 }
 
+login_model = {
+    'email': fields.String(required=True, description='User email'),
+    'password': fields.String(required=True, description='User password')
+}
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
