@@ -15,5 +15,6 @@ COPY . /app
 # Expose the desired port (replace 5000 with the appropriate port number if needed)
 EXPOSE 5000
 
-# Set the entrypoint command (modify if needed)
-CMD ["flask", "run", "--host=0.0.0.0"]
+RUN chmod u+x ./entrypoint.sh
+
+ENTRYPOINT ["./entrypoint.sh"]
