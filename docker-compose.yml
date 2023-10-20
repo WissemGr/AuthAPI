@@ -9,12 +9,12 @@ services:
       - db
     environment:
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://ons:ons@db:5432/auth
+      - DATABASE_URL=postgresql://auth:auth@db:5432/auth
   db:
     image: postgres:13.11-bullseye
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_USER=ons
-      - POSTGRES_PASSWORD=ons
+      - POSTGRES_USER=auth
+      - POSTGRES_PASSWORD=auth
       - POSTGRES_DB=auth
