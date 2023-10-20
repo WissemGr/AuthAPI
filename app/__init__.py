@@ -3,7 +3,7 @@ import logging
 from app.config import *
 from app.routes.auth import auth_ns
 from app.routes.reset import password_reset_api
-from app.routes.protected import protected_ns
+from app.routes.verify import verify_ns
 from app.authorizations import json as authorizations
 from flask import Flask
 from app.models import db
@@ -29,9 +29,8 @@ logging.basicConfig(level=logging.DEBUG,
 # Initialize the API
 api = Api(app, authorizations=authorizations)
 api.add_namespace(auth_ns)
-api.add_namespace(protected_ns)
 api.add_namespace(password_reset_api)
-
+api.add_namespace(verify_ns)
 # Initialize the Flask Mail extension with the app
 mail = Mail(app)
 
