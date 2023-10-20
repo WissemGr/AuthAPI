@@ -1,6 +1,6 @@
 import jwt
 import logging
-from app.config import secret_key
+from app.config import *
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
 from app.models import db, user_model, login_model, User
@@ -115,7 +115,7 @@ class UserLogin(Resource):
                     'user_id': user.id,
                     'exp': datetime.utcnow() + timedelta(hours=1)  # Token expiration time
                 },
-                'your-secret-key',  # Replace with your own secret key
+                secret_key,  # Replace with your own secret key
                 algorithm='HS256'
             )
 
@@ -137,29 +137,32 @@ class ProtectedResource(Resource):
         bearer = request.headers['Authorization']
         token = bearer.split(' ')[1]
 
+
         try:
             # Decode the token and verify its authenticity
-            decoded_token = jwt.decode(
-                token,
-                'your-secret-key',  # Replace with your own secret key
-                algorithms=['HS256']
-            )
+            decoded_token = jwt.decode( token,secret_key,algorithms=['HS256'])
+
             # Check if the token has expired
             expiration_time = datetime.utcfromtimestamp(decoded_token['exp'])
             if expiration_time < datetime.utcnow():
                 return jsonify({'error': 'Token has expired.'}), 401
         except jwt.exceptions.DecodeError:
-            return {'error': 'Invalid token.'}, 401
+            return {'error': 'Invalid token'}, 401
 
         return {'token': decoded_token}, 200
+    
 #reset paswsord code starts here 
-#mail server config 
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = "authapi5"  # Replace with your email username
-app.config["MAIL_PASSWORD"] = "udxqoqjwgpqkfdgk"  # Replace with your genearated email password
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
+
+# Set up email configuration
+app.config["MAIL_SERVER"] = mail_server
+app.config["MAIL_PORT"] = int(mail_port)  # Make sure to convert to an integer
+app.config["MAIL_USERNAME"] = mail_username
+app.config["MAIL_PASSWORD"] = mail_password
+
+# Optional: Set TLS and SSL configuration
+app.config["MAIL_USE_TLS"] = mail_use_tls == "True"  # Convert to bool
+app.config["MAIL_USE_SSL"] = mail_use_ssl == "True"  # Convert to bool
+
 mail = Mail(app)
 
 # Password Reset API

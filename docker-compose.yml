@@ -9,7 +9,7 @@ services:
       - db
     environment:
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://ons:ons@db:5433/auth
+      - DATABASE_URL=postgresql://ons:ons@db:5432/auth
   db:
     image: postgres:13.11-bullseye
     ports:
